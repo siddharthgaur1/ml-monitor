@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  ml-monitor:
+    build: .
+    ports:
+      - "8080:8080"   # REST API
+      - "8501:8501"   # Streamlit dashboard
+    volumes:
+      - ml_monitor_data:/data
+      - ./models:/models:ro       # mount your pickled model here
+      - ./reference:/reference:ro # mount your reference dataset CSV here
+    environment:
+      - ML_MONITOR_DB=/data/ml_monitor.db
+    command: >
+      python -m ml_monitor.cli start
+      --model /models/model.pkl
+      --reference /reference/reference.csv
+      --port 8080
+      --db /data/ml_monitor.db
+
+volumes:
+  ml_monitor_data:

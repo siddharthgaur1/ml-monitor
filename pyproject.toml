@@ -1,0 +1,45 @@
+[project]
+name = "ml-monitor"
+version = "0.1.0"
+description = "Model-agnostic ML monitoring: data drift, concept drift, and prediction drift for sklearn/XGBoost/LightGBM models in production."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.23",
+    "pandas>=1.5",
+    "scipy>=1.9",
+    "click>=8.1",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+xgboost = ["xgboost>=1.7"]
+lightgbm = ["lightgbm>=3.3"]
+torch = ["torch>=1.13"]
+api = ["fastapi>=0.100", "uvicorn>=0.23", "pydantic>=2.0"]
+dashboard = ["streamlit>=1.25", "plotly>=5.15"]
+sklearn = ["scikit-learn>=1.1"]
+all = [
+    "xgboost>=1.7",
+    "lightgbm>=3.3",
+    "fastapi>=0.100",
+    "uvicorn>=0.23",
+    "pydantic>=2.0",
+    "streamlit>=1.25",
+    "plotly>=5.15",
+    "scikit-learn>=1.1",
+]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "scikit-learn>=1.1"]
+
+[project.scripts]
+ml-monitor = "ml_monitor.cli:cli"
+
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["ml_monitor*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
