@@ -1,0 +1,17 @@
+# Copy to featurestore.yaml and adjust as needed.
+# Defaults below require no extra dependencies (parquet + sqlite).
+
+offline_store:
+  type: parquet          # parquet | duckdb
+  path: ./data/offline
+
+online_store:
+  type: sqlite            # sqlite | redis
+  path: ./data/online.db  # sqlite only
+  # host: localhost       # redis only
+  # port: 6379             # redis only
+  ttl_hours: 24
+
+registry:
+  type: sqlite             # sqlite (postgres not yet implemented)
+  path: ./data/registry.db

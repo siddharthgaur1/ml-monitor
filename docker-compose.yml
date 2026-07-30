@@ -1,0 +1,19 @@
+# Minimal compose: the API with the default parquet+sqlite stores, plus an
+# optional Redis for the online store. Redis is not required — swap
+# featurestore.yaml's online_store.type to "redis" if you enable it.
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./featurestore.yaml:/app/featurestore.yaml
+    environment:
+      - FEATURESTORE_CONFIG=featurestore.yaml
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    profiles: ["redis"]  # opt-in: docker compose --profile redis up
