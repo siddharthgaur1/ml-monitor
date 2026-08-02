@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from ml_monitor import AlertConfig, DriftConfig, Monitor
+from ml_monitor import DriftConfig, Monitor
 
 
 @pytest.fixture

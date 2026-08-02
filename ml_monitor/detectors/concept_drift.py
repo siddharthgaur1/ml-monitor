@@ -11,15 +11,13 @@ Implements ADWIN, Page-Hinkley, and DDM as compact, working algorithms
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-from typing import List, Optional
 
 
 # ---------------------------------------------------------------------------
 # ADWIN
 # ---------------------------------------------------------------------------
 class _Bucket:
-    __slots__ = ("total", "variance", "count")
+    __slots__ = ("count", "total", "variance")
 
     def __init__(self, value: float):
         self.total = value
@@ -37,7 +35,7 @@ class ADWIN:
     def __init__(self, delta: float = 0.002, max_buckets: int = 5):
         self.delta = delta
         self.max_buckets = max_buckets  # buckets per "row" of the exponential histogram
-        self._buckets: List[List[_Bucket]] = [[]]  # row i holds buckets of size 2**i
+        self._buckets: list[list[_Bucket]] = [[]]  # row i holds buckets of size 2**i
         self.width = 0
         self.total = 0.0
         self.variance = 0.0
@@ -68,8 +66,7 @@ class ADWIN:
 
     def _flat_buckets(self):
         for row_idx, row in enumerate(self._buckets):
-            for b in row:
-                yield b
+            yield from row
 
     def update(self, value: float) -> bool:
         self.n_seen += 1

@@ -2,8 +2,8 @@ import os
 import tempfile
 import time
 
-from ml_monitor.store.sqlite_store import SQLiteStore
 from ml_monitor.store.aggregator import aggregate
+from ml_monitor.store.sqlite_store import SQLiteStore
 
 
 def test_log_and_read_prediction():

@@ -9,8 +9,6 @@ Severity bands (applied to a normalized drift_score in ~[0, inf)):
 """
 from __future__ import annotations
 
-from typing import Optional
-
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -22,7 +20,7 @@ SEVERITY_BANDS = (
 )
 
 
-def severity_for_score(score: float) -> Optional[str]:
+def severity_for_score(score: float) -> str | None:
     for cutoff, label in SEVERITY_BANDS:
         if score >= cutoff:
             return label

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 try:
     from fastapi import FastAPI
@@ -12,12 +12,12 @@ except ImportError as e:  # pragma: no cover
 
 
 class LogRequest(BaseModel):
-    features: Dict[str, Any]
+    features: dict[str, Any]
     prediction: Any
-    label: Optional[Any] = None
+    label: Any | None = None
 
 
-def create_app(monitor) -> "FastAPI":
+def create_app(monitor) -> FastAPI:
     app = FastAPI(title="ml-monitor")
 
     @app.post("/log")
@@ -52,7 +52,7 @@ def create_app(monitor) -> "FastAPI":
         return {"status": "ok", "time": time.time()}
 
     @app.post("/reference/update")
-    def reference_update(body: Dict[str, Any]):
+    def reference_update(body: dict[str, Any]):
         import pandas as pd
 
         monitor.update_reference(pd.DataFrame(body.get("reference_data", [])),

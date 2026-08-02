@@ -9,7 +9,7 @@ between the two packages, either one can be installed alone.
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from ..core.monitor import AlertConfig, DriftConfig, Monitor
 
@@ -36,8 +36,8 @@ def monitor_from_feature_store(
     feature_group: str,
     model: Any = None,
     reference_predictions=None,
-    config: Optional[DriftConfig] = None,
-    alerts: Optional[AlertConfig] = None,
+    config: DriftConfig | None = None,
+    alerts: AlertConfig | None = None,
     db_path: str = "ml_monitor.db",
 ) -> Monitor:
     """Construct a Monitor whose reference_data is the given feature group's

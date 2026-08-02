@@ -19,7 +19,7 @@ def inject_drift(df: pd.DataFrame, feature: str, drift_type: str = "gradual", sh
     - gradual: linearly ramp the shift from 0 to `shift` * std over the tail.
     - seasonal: add a sinusoidal oscillation of amplitude `shift` * std.
     """
-    rng = np.random.default_rng(seed)
+    np.random.default_rng(seed)
     out = df.copy()
     n = len(out)
     std = out[feature].std() or 1.0

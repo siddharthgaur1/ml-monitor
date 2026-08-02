@@ -2,16 +2,16 @@
 from __future__ import annotations
 
 from collections import deque
-from dataclasses import dataclass, field
-from typing import Any, Deque, Dict, List, Optional
+from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
 class LogRecord:
     timestamp: float
-    features: Dict[str, Any]
+    features: dict[str, Any]
     prediction: Any
-    label: Optional[Any] = None
+    label: Any | None = None
 
 
 class WindowManager:
@@ -19,12 +19,12 @@ class WindowManager:
 
     def __init__(self, window_size: int = 500):
         self.window_size = window_size
-        self._records: Deque[LogRecord] = deque(maxlen=window_size)
+        self._records: deque[LogRecord] = deque(maxlen=window_size)
 
     def add(self, record: LogRecord) -> None:
         self._records.append(record)
 
-    def records(self) -> List[LogRecord]:
+    def records(self) -> list[LogRecord]:
         return list(self._records)
 
     def features_frame(self):

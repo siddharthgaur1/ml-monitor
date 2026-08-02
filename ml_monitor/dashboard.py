@@ -11,16 +11,16 @@ import time
 import pandas as pd
 
 try:
-    import streamlit as st
     import plotly.express as px
     import plotly.graph_objects as go
+    import streamlit as st
 except ImportError as e:  # pragma: no cover
     raise ImportError("Install the 'dashboard' extra: pip install ml-monitor[dashboard]") from e
 
-from ml_monitor.store.sqlite_store import SQLiteStore
-from ml_monitor.store.aggregator import aggregate
-from ml_monitor.detectors.data_drift import detect_data_drift
 from ml_monitor.detectors.correlation_drift import detect_correlation_drift
+from ml_monitor.detectors.data_drift import detect_data_drift
+from ml_monitor.store.aggregator import aggregate
+from ml_monitor.store.sqlite_store import SQLiteStore
 
 
 def _get_db_path() -> str:
@@ -49,7 +49,7 @@ def main():
 
     current_df = pd.DataFrame([r["features"] for r in rows])
     pred_series = pd.Series([r["prediction"] for r in rows])
-    timestamps = pd.Series([r["timestamp"] for r in rows])
+    pd.Series([r["timestamp"] for r in rows])
 
     reference_df = None
     if reference_path and os.path.exists(reference_path):

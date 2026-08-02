@@ -5,7 +5,7 @@ import json
 import sqlite3
 import threading
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS predictions (
@@ -46,11 +46,11 @@ class SQLiteStore:
 
     def log_prediction(
         self,
-        features: Dict[str, Any],
+        features: dict[str, Any],
         prediction: Any,
-        label: Optional[Any] = None,
-        drift_scores: Optional[dict] = None,
-        timestamp: Optional[float] = None,
+        label: Any | None = None,
+        drift_scores: dict | None = None,
+        timestamp: float | None = None,
     ) -> int:
         timestamp = timestamp if timestamp is not None else time.time()
         with self._lock:
@@ -68,8 +68,8 @@ class SQLiteStore:
             self._conn.commit()
             return cur.lastrowid
 
-    def log_alert(self, severity: str, message: str, drift_type: str, feature: Optional[str] = None,
-                   timestamp: Optional[float] = None) -> int:
+    def log_alert(self, severity: str, message: str, drift_type: str, feature: str | None = None,
+                   timestamp: float | None = None) -> int:
         timestamp = timestamp if timestamp is not None else time.time()
         with self._lock:
             cur = self._conn.execute(
@@ -79,7 +79,7 @@ class SQLiteStore:
             self._conn.commit()
             return cur.lastrowid
 
-    def recent_predictions(self, limit: int = 1000, since: Optional[float] = None) -> List[dict]:
+    def recent_predictions(self, limit: int = 1000, since: float | None = None) -> list[dict]:
         query = "SELECT id, timestamp, features, prediction, label, drift_scores FROM predictions"
         params: list = []
         if since is not None:
@@ -91,7 +91,7 @@ class SQLiteStore:
             rows = self._conn.execute(query, params).fetchall()
         return [self._row_to_dict(r) for r in rows][::-1]
 
-    def recent_alerts(self, limit: int = 200, since: Optional[float] = None) -> List[dict]:
+    def recent_alerts(self, limit: int = 200, since: float | None = None) -> list[dict]:
         query = "SELECT id, timestamp, feature, severity, message, drift_type FROM alerts"
         params: list = []
         if since is not None:
@@ -108,7 +108,7 @@ class SQLiteStore:
         with self._lock:
             return self._conn.execute("SELECT COUNT(*) FROM predictions").fetchone()[0]
 
-    def purge_old(self, retention_days: Optional[int] = None) -> int:
+    def purge_old(self, retention_days: int | None = None) -> int:
         retention_days = retention_days if retention_days is not None else self.retention_days
         cutoff = time.time() - retention_days * 86400
         with self._lock:

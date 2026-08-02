@@ -3,14 +3,13 @@ from __future__ import annotations
 
 import time
 from collections import defaultdict
-from typing import List
 
 from .sqlite_store import SQLiteStore
 
 _BUCKET_SECONDS = {"hourly": 3600, "daily": 86400}
 
 
-def aggregate(store: SQLiteStore, granularity: str = "hourly", hours: int = 24) -> List[dict]:
+def aggregate(store: SQLiteStore, granularity: str = "hourly", hours: int = 24) -> list[dict]:
     """Bucket predictions by hour/day, returning count, label coverage, and
     (if drift_scores were logged) the mean drift score per bucket.
     """

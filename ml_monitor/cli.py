@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 import pickle
-import subprocess
-import sys
 
 import click
 import pandas as pd

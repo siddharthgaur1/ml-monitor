@@ -5,22 +5,22 @@ import html
 import json
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
 class DriftReport:
     generated_at: float = field(default_factory=time.time)
-    data_drift: Dict[str, dict] = field(default_factory=dict)
-    prediction_drift: Optional[dict] = None
-    concept_drift: Optional[dict] = None
-    correlation_drift: Optional[dict] = None
+    data_drift: dict[str, dict] = field(default_factory=dict)
+    prediction_drift: dict | None = None
+    concept_drift: dict | None = None
+    correlation_drift: dict | None = None
     n_samples: int = 0
 
-    def drifted_features(self) -> List[str]:
+    def drifted_features(self) -> list[str]:
         return [f for f, r in self.data_drift.items() if r.get("is_drifted")]
 
-    def top_drifted(self, n: int = 5) -> List[Dict[str, Any]]:
+    def top_drifted(self, n: int = 5) -> list[dict[str, Any]]:
         rows = [{"feature": f, **r} for f, r in self.data_drift.items()]
         rows.sort(key=lambda r: r.get("drift_score", 0), reverse=True)
         return rows[:n]

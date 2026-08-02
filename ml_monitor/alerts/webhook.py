@@ -14,5 +14,5 @@ def send_webhook(url: str, payload: dict, timeout: float = 5.0) -> bool:
         req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return 200 <= resp.status < 300
-    except Exception:
+    except Exception:  # noqa: BLE001 -- alerting must not crash the monitor, see docstring
         return False

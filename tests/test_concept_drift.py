@@ -1,6 +1,9 @@
 import numpy as np
 
-from ml_monitor.detectors.concept_drift import ADWIN, DDM, PageHinkley, detect_concept_drift
+from ml_monitor.detectors.concept_drift import (
+    ADWIN,
+    detect_concept_drift,
+)
 
 
 def _stable_then_degraded(n=400, degrade_at=200, base_err=0.05, degraded_err=0.6, seed=0):

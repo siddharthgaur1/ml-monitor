@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -35,9 +35,9 @@ class DriftConfig:
 
 @dataclass
 class AlertConfig:
-    email: Optional[str] = None
-    webhook_url: Optional[str] = None
-    slack_webhook_url: Optional[str] = None
+    email: str | None = None
+    webhook_url: str | None = None
+    slack_webhook_url: str | None = None
     severity_threshold: str = "WARNING"
     dedup_cooldown_seconds: float = 3600.0
 
@@ -56,10 +56,10 @@ class Monitor:
     def __init__(
         self,
         model: Any = None,
-        reference_data: Optional[pd.DataFrame] = None,
-        reference_predictions: Optional[np.ndarray] = None,
-        config: Optional[DriftConfig] = None,
-        alerts: Optional[AlertConfig] = None,
+        reference_data: pd.DataFrame | None = None,
+        reference_predictions: np.ndarray | None = None,
+        config: DriftConfig | None = None,
+        alerts: AlertConfig | None = None,
         db_path: str = "ml_monitor.db",
         retention_days: int = 30,
     ):
@@ -75,12 +75,12 @@ class Monitor:
         self.store = SQLiteStore(db_path=db_path, retention_days=retention_days)
         self.deduplicator = Deduplicator(cooldown_seconds=self.alert_config.dedup_cooldown_seconds)
 
-        self._last_report: Optional[DriftReport] = None
+        self._last_report: DriftReport | None = None
 
     # ------------------------------------------------------------------
     # Hot path
     # ------------------------------------------------------------------
-    def log(self, features, prediction: Any, label: Optional[Any] = None) -> None:
+    def log(self, features, prediction: Any, label: Any | None = None) -> None:
         """Fast: no drift computation happens here."""
         if isinstance(features, pd.Series):
             features = features.to_dict()
@@ -175,16 +175,19 @@ class Monitor:
                 due.append({"feature": "__prediction__", "severity": severity,
                              "drift_score": report.prediction_drift["drift_score"]})
 
-        if report.concept_drift and report.concept_drift.get("drift_detected"):
-            if self.deduplicator.should_alert("concept_drift", None):
-                message = (
-                    f"Concept drift detected via {report.concept_drift['method']} "
-                    f"(baseline error={report.concept_drift['baseline_error_rate']:.3f}, "
-                    f"current error={report.concept_drift['current_error_rate']:.3f})"
-                )
-                log_alert("CRITICAL", message, "concept_drift")
-                self.store.log_alert("CRITICAL", message, "concept_drift")
-                due.append({"feature": "__concept__", "severity": "CRITICAL", "drift_score": 1.0})
+        if (
+            report.concept_drift
+            and report.concept_drift.get("drift_detected")
+            and self.deduplicator.should_alert("concept_drift", None)
+        ):
+            message = (
+                f"Concept drift detected via {report.concept_drift['method']} "
+                f"(baseline error={report.concept_drift['baseline_error_rate']:.3f}, "
+                f"current error={report.concept_drift['current_error_rate']:.3f})"
+            )
+            log_alert("CRITICAL", message, "concept_drift")
+            self.store.log_alert("CRITICAL", message, "concept_drift")
+            due.append({"feature": "__concept__", "severity": "CRITICAL", "drift_score": 1.0})
 
         if due:
             if self.alert_config.webhook_url:
@@ -206,7 +209,7 @@ class Monitor:
         app = create_app(self)
         uvicorn.run(app, host=host, port=port)
 
-    def update_reference(self, reference_data: pd.DataFrame, reference_predictions: Optional[np.ndarray] = None):
+    def update_reference(self, reference_data: pd.DataFrame, reference_predictions: np.ndarray | None = None):
         self.reference_data = pd.DataFrame(reference_data)
         if reference_predictions is not None:
             self.reference_predictions = np.asarray(reference_predictions)

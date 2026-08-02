@@ -2,13 +2,12 @@
 from __future__ import annotations
 
 import time
-from typing import Dict, Tuple
 
 
 class Deduplicator:
     def __init__(self, cooldown_seconds: float = 3600.0):
         self.cooldown_seconds = cooldown_seconds
-        self._last_fired: Dict[Tuple[str, str], float] = {}
+        self._last_fired: dict[tuple[str, str], float] = {}
 
     def should_alert(self, drift_type: str, feature: str | None, now: float | None = None) -> bool:
         now = now if now is not None else time.time()
