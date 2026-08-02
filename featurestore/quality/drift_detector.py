@@ -9,7 +9,7 @@ optional dependency: importing this module never fails, only calling
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -17,7 +17,7 @@ import pandas as pd
 def check_drift(
     feature_store: Any,
     feature_group: str,
-    split_at: Optional[str] = None,
+    split_at: str | None = None,
     numerical_method: str = "ks",
     categorical_method: str = "chi2",
     drift_threshold: float = 0.05,

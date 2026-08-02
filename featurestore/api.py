@@ -100,8 +100,8 @@ def create_feature_group(body: FeatureGroupIn):
 @app.post("/ingest/{name}")
 async def ingest(
     name: str,
-    file: UploadFile | None = File(None),
-    rows: list[dict] | None = Body(None),
+    file: UploadFile | None = File(None),  # noqa: B008 -- FastAPI's required pattern
+    rows: list[dict] | None = Body(None),  # noqa: B008 -- FastAPI's required pattern
 ):
     """Accepts either a multipart parquet file upload, or a JSON body of rows."""
     if file is not None:
