@@ -30,7 +30,7 @@ class FeatureStoreConfig:
     registry: StoreConfig
 
     @classmethod
-    def from_dict(cls, raw: dict) -> "FeatureStoreConfig":
+    def from_dict(cls, raw: dict) -> FeatureStoreConfig:
         merged = {**DEFAULT_CONFIG, **raw}
         return cls(
             offline_store=_section(merged, "offline_store"),
@@ -39,7 +39,7 @@ class FeatureStoreConfig:
         )
 
     @classmethod
-    def load(cls, path: str | Path) -> "FeatureStoreConfig":
+    def load(cls, path: str | Path) -> FeatureStoreConfig:
         path = Path(path)
         if not path.exists():
             return cls.from_dict({})

@@ -15,7 +15,7 @@ def compute_stats(df: pd.DataFrame, feature_names: list[str]) -> dict:
             continue
         col = df[name]
         entry = {
-            "count": int(len(col)),
+            "count": len(col),
             "null_rate": float(col.isna().mean()) if len(col) else 0.0,
         }
         is_statable = pd.api.types.is_numeric_dtype(col) or pd.api.types.is_bool_dtype(col)

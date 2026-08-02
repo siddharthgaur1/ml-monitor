@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 from featurestore.core.pit_join import PITJoinResult
-from featurestore.stores.offline.base import OfflineStore, REQUIRED_COLS
+from featurestore.stores.offline.base import REQUIRED_COLS, OfflineStore
 
 try:
     import duckdb
