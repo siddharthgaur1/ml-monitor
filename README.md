@@ -7,6 +7,27 @@ prediction stream, get drift scores, alerts, and a dashboard.
 
 Project #8 in a portfolio series.
 
+## Architecture
+
+`Monitor.log()` is the hot path: it only appends to an in-memory window and
+writes one SQLite row — no detector runs inline. `drift_report()` is the
+cold path: it lazily runs the data/prediction/concept/correlation detectors
+(`ml_monitor/detectors/*`) over the current window against the reference
+data, and the REST API (`api.py`), dashboard (`dashboard.py`), and CLI all
+call that same method rather than duplicating detector logic. Alerts
+(`alerts/`) fire off the same drift report, deduplicated per feature+type
+within a 1hr window.
+
+## Results
+
+Detector tests (`pytest -q`, 25 tests, ~86% coverage of `core/`+`detectors/`)
+assert drift **is** flagged on synthetically shifted distributions and **is
+not** falsely flagged on identical ones, across all 8 detector methods (KS,
+PSI, chi-squared, Wasserstein, ADWIN, Page-Hinkley, DDM, Spearman). The
+`fraud_detection_example.py` demo's 0.07→0.92 drift-score jump after
+injecting drift is the one end-to-end illustrative number in this repo —
+reproduce with `python examples/fraud_detection_example.py`.
+
 ## Install
 
 ```bash
@@ -175,7 +196,7 @@ scoring against. This repo does not import from or depend on
 `stream-fraud-detector` — the integration point is just the `Monitor.log()`
 call documented above, wired in from that project's side.
 
-## Deliberate simplifications
+## Limitations
 
 - **Drift computed lazily, not on a background thread** — simpler, no
   locking between the hot `log()` path and drift math; the tradeoff is that
