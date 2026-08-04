@@ -187,7 +187,15 @@ pytest
 ways, that no feature row later than a label's timestamp can ever be
 selected.
 
-## Deliberate simplifications
+## Results
+
+No accuracy metric applies to a feature store — the correctness claim is
+the point-in-time join's anti-leakage guarantee. Verify it yourself:
+`pytest` (headline suite is `tests/test_pit_join.py`, which asserts —
+several ways, including a brute-force cross-check — that no feature row
+later than a label's timestamp can ever be selected).
+
+## Limitations
 
 - No Postgres registry backend — SQLite only (spec allowed `sqlite|postgres`; a single-file store fits the "no excuse for shortcuts, but no unrequested infra" brief better for a self-hosted single-machine tool).
 - `fill_strategy="last_known"` is an alias of `"none"`: `merge_asof` already returns the latest value known at-or-before the label time, so there's nothing to additionally forward-fill without looking into the future.
