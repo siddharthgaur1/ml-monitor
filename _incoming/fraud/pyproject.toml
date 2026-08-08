@@ -1,0 +1,13 @@
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# tests/ deliberately has no __init__.py: pytest then puts the directory on
+# sys.path, which is what makes `from conftest import ...` work in the test
+# modules.
+addopts = "-q"

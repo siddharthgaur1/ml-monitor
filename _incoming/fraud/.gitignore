@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+data/*.csv
+models/*.joblib
+models/*.csv
+reports/*.html
+reports/*.json
+.ipynb_checkpoints/
+loadtest/results*
