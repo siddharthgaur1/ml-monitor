@@ -1,6 +1,6 @@
 import numpy as np
 
-from ml_monitor.detectors.concept_drift import (
+from ml_platform.monitoring.detectors.concept_drift import (
     ADWIN,
     detect_concept_drift,
 )

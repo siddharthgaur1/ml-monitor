@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from ml_monitor.detectors.data_drift import (
+from ml_platform.monitoring.detectors.data_drift import (
     chi2_test,
     detect_data_drift,
     detect_feature_drift,

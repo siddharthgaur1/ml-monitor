@@ -1,6 +1,6 @@
 import numpy as np
 
-from ml_monitor.detectors.prediction_drift import detect_prediction_drift
+from ml_platform.monitoring.detectors.prediction_drift import detect_prediction_drift
 
 
 def test_no_drift_when_identical():

@@ -1,45 +1,85 @@
 [project]
-name = "ml-monitor"
-version = "0.1.0"
-description = "Model-agnostic ML monitoring: data drift, concept drift, and prediction drift for sklearn/XGBoost/LightGBM models in production."
+name = "ml-platform"
+version = "0.2.0"
+description = "Feature store, drift monitoring, and a real-time fraud-scoring service that runs through both."
 readme = "README.md"
-requires-python = ">=3.9"
+# Raised from the absorbed repos' floors (ml-monitor and lite-featurestore both
+# declared >=3.9) because the fraud subsystem targets 3.11 and its dependency
+# set was never tested below it. Claiming 3.9 for the merged package would be a
+# claim nothing verifies.
+requires-python = ">=3.11"
+license = { text = "MIT" }
 dependencies = [
+    # shared by monitoring and features
     "numpy>=1.23",
     "pandas>=1.5",
     "scipy>=1.9",
     "click>=8.1",
     "rich>=13.0",
+    # features: offline parquet store, registry serialisation, config
+    "pyarrow>=12.0",
+    "msgpack>=1.0",
+    "PyYAML>=6.0",
 ]
 
 [project.optional-dependencies]
-xgboost = ["xgboost>=1.7"]
-lightgbm = ["lightgbm>=3.3"]
-torch = ["torch>=1.13"]
-api = ["fastapi>=0.100", "uvicorn>=0.23", "pydantic>=2.0"]
-dashboard = ["streamlit>=1.25", "plotly>=5.15"]
-sklearn = ["scikit-learn>=1.1"]
-all = [
-    "xgboost>=1.7",
-    "lightgbm>=3.3",
+# The fraud subsystem is the heaviest by far and is not needed to use the
+# feature store or the monitor, so it stays opt-in rather than becoming
+# everyone's install cost.
+fraud = [
     "fastapi>=0.100",
     "uvicorn>=0.23",
     "pydantic>=2.0",
-    "streamlit>=1.25",
-    "plotly>=5.15",
+    # Pinned exactly, as stream-fraud-detector pinned it. Loosening this to
+    # >=2.0 during the merge let CI resolve a build where
+    # `kafka.errors.NoBrokersAvailable` no longer exists, breaking 16 tests.
+    "kafka-python==2.0.2",
+    "redis>=5.0",
+    "psycopg2-binary>=2.9",
+    "xgboost>=1.7",
     "scikit-learn>=1.1",
+    "shap>=0.42",
+    "evidently>=0.4",
+    "Faker>=19.0",
+    "structlog>=23.0",
+    "joblib>=1.3",
+    "prometheus-client>=0.17",
+    "python-multipart>=0.0.9",
 ]
-dev = ["pytest>=7.0", "pytest-cov>=4.0", "scikit-learn>=1.1"]
+# lite-featurestore declared python-multipart>=0.0.6 and I dropped it when
+# writing this file. Its /ingest endpoint takes a File upload, and FastAPI
+# raises at request time without it -- invisible locally because a dev machine
+# already had it, caught by CI on a clean install.
+api = ["fastapi>=0.100", "uvicorn>=0.23", "pydantic>=2.0", "python-multipart>=0.0.9"]
+dashboard = ["streamlit>=1.25", "plotly>=5.15"]
+xgboost = ["xgboost>=1.7"]
+lightgbm = ["lightgbm>=3.3"]
+sklearn = ["scikit-learn>=1.1"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "scikit-learn>=1.1", "ruff>=0.6"]
 
 [project.scripts]
-ml-monitor = "ml_monitor.cli:cli"
+ml-platform = "ml_platform.monitoring.cli:cli"
 
 [build-system]
 requires = ["setuptools>=65", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["ml_monitor*"]
+where = ["src"]
+include = ["ml_platform*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "tests_features", "tests_fraud"]
+
+[tool.ruff]
+# ml-monitor configured 100, stream-fraud-detector 110, lite-featurestore
+# nothing. Taking the wider of the two rather than the narrower: reformatting
+# ~56 lines of otherwise-untouched absorbed code would bury the actual
+# integration changes in style noise, and line length is a preference, not a
+# defect.
+line-length = 110
+target-version = "py311"
+exclude = ["docs/absorbed"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from ml_monitor.detectors.correlation_drift import detect_correlation_drift
+from ml_platform.monitoring.detectors.correlation_drift import detect_correlation_drift
 
 
 def test_flags_features_with_broken_correlation():
