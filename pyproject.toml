@@ -30,7 +30,10 @@ fraud = [
     "fastapi>=0.100",
     "uvicorn>=0.23",
     "pydantic>=2.0",
-    "kafka-python>=2.0",
+    # Pinned exactly, as stream-fraud-detector pinned it. Loosening this to
+    # >=2.0 during the merge let CI resolve a build where
+    # `kafka.errors.NoBrokersAvailable` no longer exists, breaking 16 tests.
+    "kafka-python==2.0.2",
     "redis>=5.0",
     "psycopg2-binary>=2.9",
     "xgboost>=1.7",
@@ -41,8 +44,13 @@ fraud = [
     "structlog>=23.0",
     "joblib>=1.3",
     "prometheus-client>=0.17",
+    "python-multipart>=0.0.9",
 ]
-api = ["fastapi>=0.100", "uvicorn>=0.23", "pydantic>=2.0"]
+# lite-featurestore declared python-multipart>=0.0.6 and I dropped it when
+# writing this file. Its /ingest endpoint takes a File upload, and FastAPI
+# raises at request time without it -- invisible locally because a dev machine
+# already had it, caught by CI on a clean install.
+api = ["fastapi>=0.100", "uvicorn>=0.23", "pydantic>=2.0", "python-multipart>=0.0.9"]
 dashboard = ["streamlit>=1.25", "plotly>=5.15"]
 xgboost = ["xgboost>=1.7"]
 lightgbm = ["lightgbm>=3.3"]
