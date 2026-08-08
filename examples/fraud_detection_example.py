@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from ml_monitor import AlertConfig, DriftConfig, Monitor
+from ml_platform.monitoring import AlertConfig, DriftConfig, Monitor
 from simulate.drift_simulator import inject_drift
 
 

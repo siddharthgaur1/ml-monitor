@@ -14,7 +14,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from ml_monitor import AlertConfig, DriftConfig, Monitor
+from ml_platform.monitoring import AlertConfig, DriftConfig, Monitor
 
 
 def main():
